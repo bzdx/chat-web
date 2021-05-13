@@ -1,28 +1,65 @@
 <template>
-  <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <div id="app" :style="{'min-height': page.height+'px'}">
+    <router-view />
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import Vant from 'vant'
+import Vue from 'vue'
+import VueRouter from 'vue-router'
+Vue.prototype.page = {
+  width: innerWidth,
+  height: innerHeight
+};
+Vue.use(Vant)
+Vue.use(VueRouter)
 
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import Message from "./pages/Message";
+import Contact from "./pages/Contact";
+import Person from "./pages/Person";
+
+const router = new VueRouter({
+  routes: [
+    {
+      path: '/',
+      redirect: '/message'
+    },
+    {
+      path: '/login',
+      component: Login
+    },
+    {
+      path: '/register',
+      component: Register
+    },
+    {
+      path: '/message',
+      component: Message
+    },
+    {
+      path: '/contact',
+      component: Contact
+    },
+    {
+      path: '/person',
+      component: Person
+    },
+  ]
+})
 export default {
   name: 'App',
   components: {
-    HelloWorld
-  }
+  },
+  router
 }
 </script>
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
+<style lang="stylus">
+$theme-color = #1989fa
+#app
+  margin 0 auto;
+  max-width 420px
 </style>
