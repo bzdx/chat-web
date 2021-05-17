@@ -1,6 +1,6 @@
 <template>
     <div id="message">
-        <message-item v-for="(message, index) in msgList" :key="index" :message="message"/>
+        <message-item v-for="(message, index) in msgListShow" :key="index" :message="message"/>
 
         <page-menu :active="0"/>
     </div>
@@ -14,30 +14,77 @@ export default {
     data() {
         return {
             msgList: [
-                {
-                    uid: '162453456854',
-                    object: 'user',
-                    name: 'test',
-                    avatar: '/img/user.jpg',
-                    created_str: '2021-05-12 17:29:31',
-                    type: 'txt',
-                    content: '啊撒旦立刻就发挥空间，爱丽丝的客服经理肯定撒法律框架'
-                },
-                {
-                    uid: '162454521654',
-                    object: 'user',
-                    name: 'test-22',
-                    avatar: '/img/user2.jpg',
-                    created_str: '2021-05-10 19:31:31',
-                    type: 'img',
-                    content: '/img/user.jpg'
-                },
-            ]
+            ],
+            msgListShow: [],
+            chatUsers: [],
         }
+    },
+    methods: {
+        getUserData(id, cb) {
+            let url = '/user'
+            let _this = this
+            this.request.get(url, {
+                params: {
+                    id: id
+                }
+            }).then(res => {
+                cb(res.data.user)
+            }).catch(e => {
+                _this.$notify({
+                    type: 'danger',
+                    message: e.response.data.msg
+                })
+            })
+        },
+        async getMessageList() {
+            let url = '/message'
+            let _this = this
+            let user = localStorage.getItem('user')
+            if (!user) {
+                location.href = '#/login'
+            }
+            user = JSON.parse(user)
+            this.request.get(url, {
+                params: {
+                    id: user.id,
+                }
+            }).then(res => {
+                _this.msgList = res.data.msgList
+                _this.msgList.forEach(msg => {
+                    if (user.id === msg.sender) {
+                        // console.log(msg)
+                        if (!_this.chatUsers.includes(msg.receiver)) {
+                            _this.chatUsers.push(msg.receiver)
+                            _this.getUserData(msg.receiver, (_user)=>{
+                                msg.name = _user
+                                _this.msgListShow.push(msg)
+                            })
+                        }
+                    } else {
+                        if (!_this.chatUsers.includes(msg.sender)) {
+                            _this.chatUsers.push(msg.sender)
+                            _this.getUserData(msg.receiver, (_user)=>{
+                                msg.name = _user.username
+                                _this.msgListShow.push(msg)
+                            })
+                        }
+                    }
+                })
+                console.log(_this.msgListShow)
+            }).catch(e => {
+                _this.$notify({
+                    type: 'danger',
+                    message: e.response.data.msg
+                })
+            })
+        },
     },
     components: {
         'page-menu': Menu,
         'message-item': MessageItem,
+    },
+    mounted() {
+        this.getMessageList()
     }
 }
 </script>

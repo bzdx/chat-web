@@ -1,11 +1,11 @@
 <template>
-    <div class="message-item">
+    <div class="message-item" @click="goToChat(message)">
         <img width="50" height="50" :src="message.avatar" class="message-item-avatar">
         <div class="message-item-body" :style="{width: page.width - 86 + 'px'}">
             <span class="message-item-body-date">{{ message.created_str }}</span>
             <div class="message-item-body-name">{{ message.name }}</div>
             <div class="message-item-body-content">
-                <template v-if="message.type === 'txt'">
+                <template v-if="message.type === 1">
                     {{ message.content }}
                 </template>
                 <template v-else>
@@ -20,6 +20,16 @@
 export default {
     name: "MessageItem",
     props: ['message'],
+    methods: {
+        goToChat(msg) {
+            let user = JSON.parse(localStorage.getItem('user'))
+            let id = msg.receiver
+            if (msg.receiver === user.id) {
+                id = msg.sender
+            }
+            location.href = '#/send?id='+id
+        }
+    }
 }
 </script>
 

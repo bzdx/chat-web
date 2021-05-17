@@ -38,7 +38,26 @@
         },
         methods: {
             onSubmit() {
-                location.href = '#/message'
+                let url = '/login'
+                this.request.post(url, {
+                    username: this.username,
+                    password: this.password,
+                }).then(res => {
+                    this.$notify({
+                        type: 'success',
+                        message: res.data.msg
+                    })
+                    localStorage.setItem('user', JSON.stringify(res.data.user))
+                    localStorage.setItem('token', res.data.token)
+                    setTimeout(()=>{
+                        location.href = '#/message'
+                    }, 2000)
+                }).catch(e => {
+                    this.$notify({
+                        type: 'danger',
+                        message: e.response.data.msg
+                    })
+                })
             }
         }
     }

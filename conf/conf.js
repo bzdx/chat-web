@@ -6,10 +6,9 @@ module.exports = {
     },
     db: {
         url: "mongodb://127.0.0.1:27017",
-        name: 'chat_room',
-        collections: {
+        name: 'chat',
+        collection: {
             user: 'user',
-            room: 'room',
             message: 'message',
         }
     }

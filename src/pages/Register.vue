@@ -48,7 +48,32 @@
         },
         methods: {
             onSubmit() {
-                console.log(111)
+                if (this.username && this.password) {
+                    let url = '/register'
+                    let _this = this
+                    this.request.post(url, {
+                        username: _this.username,
+                        password: _this.password,
+                    }).then(res => {
+                        this.$notify({
+                            type: 'success',
+                            message: res.data.msg
+                        })
+                        setTimeout(()=>{
+                            location.href = '#/login'
+                        }, 2000)
+                    }).catch(e => {
+                        this.$notify({
+                            type: 'danger',
+                            message: e.response.data.msg
+                        })
+                    })
+                } else {
+                    this.$notify({
+                        type: 'warning',
+                        message: '缺少必填项目！'
+                    })
+                }
             },
             passwordIsSync() {
                 return this.password === this.re_password

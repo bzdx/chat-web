@@ -36,6 +36,7 @@ $menu-height = 38px
     bottom 0
     height $menu-height
     border-top 2px solid rgba($theme-color, .4)
+    background-color white
     &-item
         flex 1
         padding-top 5px
